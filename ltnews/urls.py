@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import urls
 from django.contrib.auth.views import LoginView, LogoutView
+from ltnews.routers import router
 from news import views
 from news.view import feed_views, item_views, profile_views, section_views
 
@@ -13,6 +14,7 @@ urls.handler500 = 'news.views.server_error'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include(router.urls)),
     path('', views.index, name='index'),
 
     path('register/', views.register, name='register'),
