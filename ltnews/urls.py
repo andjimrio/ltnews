@@ -1,21 +1,14 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.conf import urls
 from django.contrib.auth.views import LoginView, LogoutView
 from ltnews.routers import router
 from news import views
 from news.view import feed_views, item_views, profile_views, section_views
 
 
-urls.handler400 = 'news.views.bad_request'
-urls.handler403 = 'news.views.permission_denied'
-urls.handler404 = 'news.views.page_not_found'
-urls.handler500 = 'news.views.server_error'
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
-    path('', views.index, name='index'),
+    path('', include(router.urls)),
 
     path('register/', views.register, name='register'),
     path('login/', LoginView.as_view(template_name='login.html'), name='login'),
