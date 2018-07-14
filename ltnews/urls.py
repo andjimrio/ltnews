@@ -1,18 +1,17 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.contrib.auth.views import LoginView, LogoutView
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 from ltnews.routers import router
-from news import views
 from news.view import feed_views, item_views, profile_views, section_views
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-
-    path('register/', views.register, name='register'),
-    path('login/', LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', LogoutView.as_view(next_page='index'), name='logout'),
+    path('auth/', include([
+        path('obtain_token/', obtain_jwt_token, name='obtain_jwt'),
+        path('refresh_token/', refresh_jwt_token, name='refresh_jwt'),
+    ])),
 
     path('profile/', include([
         path('view/', profile_views.profile_view, name='profile_view'),
