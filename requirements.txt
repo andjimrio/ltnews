@@ -6,3 +6,4 @@ psycopg2==2.7.5
 python-dateutil==2.7.3
 django-rest-auth==0.9.3
 django-allauth==0.36.0
+django-cors-headers==2.3.0
