@@ -11,4 +11,4 @@ class ProfileSerializer(serializers.ModelSerializer):
 class SectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Section
-        fields = '__all__'
+        fields = ('id', 'title', 'description', 'user')

@@ -14,7 +14,7 @@ def get_section(section_id):
 
 def delete_section(section_id, user_id):
     if user_has_section(section_id, user_id):
-        Section.objects.get(id=section_id).delete()
+        get_section(section_id).delete()
         return True
     else:
         raise PermissionDenied

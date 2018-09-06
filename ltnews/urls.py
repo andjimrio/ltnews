@@ -1,12 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
-from ltnews.routers import router
 from news.view import feed_views, item_views, profile_views, section_views
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
 
     path('auth/', include('rest_auth.urls')),
     path('registration/', include('rest_auth.registration.urls')),
@@ -16,11 +14,8 @@ urlpatterns = [
         path('edit/', profile_views.profile_edit, name='profile_edit'),
     ])),
 
-    path('section/', include([
-        path('view/<int:section_id>/', section_views.section_view, name='section_view'),
-        path('edit/<int:section_id>/', section_views.section_edit, name='section_edit'),
-        path('delete/<int:section_id>/', section_views.section_delete, name='section_delete'),
-    ])),
+    path('section/', section_views.SectionList.as_view(), name='section_list'),
+    path('section/<int:section_id>/', section_views.SectionDetail.as_view(), name='section_view'),
 
     path('feed/', include([
         path('list/', feed_views.feed_list, name='feed_list'),

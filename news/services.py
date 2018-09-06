@@ -18,3 +18,8 @@ def get_pagination(page, query):
 def check_user(model, user):
     if model.user.user.id != user.id:
         raise PermissionDenied
+
+
+def add_profile_data(data, user):
+    data['user'] = user.profile.id
+    return data
