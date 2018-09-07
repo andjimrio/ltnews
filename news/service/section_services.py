@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from django.core.exceptions import PermissionDenied
+from news.services import check_user
 from news.models import Profile, Section
 from news.service.profile_services import get_profile
 
@@ -8,16 +8,15 @@ def create_section(title_section, user_id):
     return Section.objects.get_or_create(title=title_section, user=get_profile(user_id))
 
 
-def get_section(section_id):
-    return get_object_or_404(Section, pk=section_id)
+def get_section(section_id, user):
+    section = get_object_or_404(Section, pk=section_id)
+    check_user(section, user)
+    return section
 
 
-def delete_section(section_id, user_id):
-    if user_has_section(section_id, user_id):
-        get_section(section_id).delete()
-        return True
-    else:
-        raise PermissionDenied
+
+def delete_section(section_id, user):
+    get_section(section_id, user).delete()
 
 
 def user_has_section(section_id, user_id):

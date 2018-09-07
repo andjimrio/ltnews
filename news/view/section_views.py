@@ -1,6 +1,5 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from news.services import check_user, add_profile_data
 from news.service.section_services import get_sections_by_user
 from news.service.section_services import get_section, delete_section
 from news.serializer.serializers import SectionSerializer
@@ -15,9 +14,9 @@ class SectionList(APIView):
 
     @staticmethod
     def post(request):
-        serializer = SectionSerializer(data=add_profile_data(request.data, request.user))
+        serializer = SectionSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user.profile)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -26,23 +25,21 @@ class SectionList(APIView):
 class SectionDetail(APIView):
     @staticmethod
     def get(request, section_id):
-        section = get_section(section_id)
-        check_user(section, request.user)
+        section = get_section(section_id, request.user)
         serializer = SectionSerializer(section)
         return Response(serializer.data)
 
     @staticmethod
     def put(request, section_id):
-        section = get_section(section_id)
-        check_user(section, request.user)
-        serializer = SectionSerializer(section, data=add_profile_data(request.data, request.user))
+        section = get_section(section_id, request.user)
+        serializer = SectionSerializer(section, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user.profile)
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def delete(request, section_id):
-        delete_section(section_id, request.user.id)
+        delete_section(section_id, request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
