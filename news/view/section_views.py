@@ -1,9 +1,8 @@
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from news.service.section_services import get_sections_by_user
-from news.service.section_services import get_section, delete_section
 from news.serializer.serializers import SectionSerializer
-from rest_framework import status
+from news.service.section_services import get_section, delete_section, get_sections_by_user
 
 
 class SectionList(APIView):

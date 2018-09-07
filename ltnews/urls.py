@@ -15,14 +15,11 @@ urlpatterns = [
     ])),
 
     path('section/', section_views.SectionList.as_view(), name='section_list'),
-    path('section/<int:section_id>/', section_views.SectionDetail.as_view(), name='section_view'),
+    path('section/<int:section_id>/', section_views.SectionDetail.as_view(), name='section_detail'),
 
-    path('feed/', include([
-        path('list/', feed_views.feed_list, name='feed_list'),
-        path('view/<int:feed_id>/', feed_views.feed_view, name='feed_view'),
-        path('edit/<int:feed_id>/', feed_views.feed_create, name='feed_create'),
-        path('delete/<int:section_id>/<int:feed_id>/', feed_views.feed_delete, name='feed_delete'),
-    ])),
+    path('feed/', feed_views.FeedList.as_view(), name='feed_list'),
+    path('feed/<int:feed_id>/', feed_views.FeedDetail.as_view(), name='feed_detail'),
+    path('feed/links/', feed_views.FeedMoreDetail.as_view(), name='feed_links'),
 
     path('item/', include([
         path('list/', item_views.item_list, name='item_list'),

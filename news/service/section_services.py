@@ -14,13 +14,8 @@ def get_section(section_id, user):
     return section
 
 
-
 def delete_section(section_id, user):
     get_section(section_id, user).delete()
-
-
-def user_has_section(section_id, user_id):
-    return Section.objects.filter(user__user_id=user_id).filter(id=section_id).exists()
 
 
 def get_sections_by_user(user_id):
