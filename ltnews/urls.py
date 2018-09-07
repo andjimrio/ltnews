@@ -19,7 +19,7 @@ urlpatterns = [
 
     path('feed/', feed_views.FeedList.as_view(), name='feed_list'),
     path('feed/<int:feed_id>/', feed_views.FeedDetail.as_view(), name='feed_detail'),
-    path('feed/links/', feed_views.FeedMoreDetail.as_view(), name='feed_links'),
+    path('feed/links/', feed_views.FeedLinks.as_view(), name='feed_links'),
 
     path('item/', include([
         path('list/', item_views.item_list, name='item_list'),

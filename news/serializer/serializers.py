@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from news.models import Profile, Section, Feed
+from news.models import Profile, Section, Feed, Item
 from news.utility.populate_utilities import populate_rss
 
 
@@ -33,3 +33,11 @@ class FeedFormSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         pass
+
+
+class ItemSerializer(serializers.ModelSerializer):
+    feed = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Item
+        fields = '__all__'

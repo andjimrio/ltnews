@@ -35,7 +35,7 @@ class FeedDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class FeedMoreDetail(APIView):
+class FeedLinks(APIView):
     @staticmethod
     def get(request):
         links = all_feeds_link(request.user.id)
