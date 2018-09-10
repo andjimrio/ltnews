@@ -21,13 +21,12 @@ urlpatterns = [
     path('feed/<int:feed_id>/', feed_views.FeedDetail.as_view(), name='feed_detail'),
     path('feed/links/', feed_views.FeedLinks.as_view(), name='feed_links'),
 
-    path('item/', include([
-        path('list/', item_views.item_list, name='item_list'),
-        path('view/<int:item_id>/', item_views.item_view, name='item_view'),
-        path('query/<slug:query>/', item_views.item_query, name='item_query'),
-        path('recommend/', item_views.item_recommend, name='item_recommend'),
-        path('summary/', item_views.item_summary, name='item_summary'),
-        path('search/', item_views.item_search, name='item_search'),
-        path('saved/', item_views.item_saved, name='item_saved'),
-    ])),
+    path('item/', item_views.ItemList.as_view(), name='item_list'),
+    path('item/<int:item_id>/', item_views.ItemDetail.as_view(), name='item_detail'),
+    path('item/<int:item_id>/similarity/', item_views.ItemSimilarity.as_view(), name='item_similarity'),
+    path('item/query/<slug:query>/', item_views.ItemQuery.as_view(), name='item_query'),
+    path('item/recommend/', item_views.ItemRecommend.as_view(), name='item_recommend'),
+    path('item/summary/', item_views.ItemSummary.as_view(), name='item_summary'),
+    path('item/search/', item_views.ItemSearch.as_view(), name='item_search'),
+    path('item/saved/', item_views.ItemSaved.as_view(), name='item_saved'),
 ]

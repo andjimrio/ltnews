@@ -1,3 +1,4 @@
+from rest_framework import status, serializers
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,7 +16,7 @@ class ItemList(APIView):
         if follow is not None:
             for item_id in request.session.get('news_ids', []):
                 get_status_by_user_item(request.user.id, item_id).as_view()
-        request.session['news_ids'] = [x['item_id'] for x in items]
+        request.session['news_ids'] = [x.id for x in items]
 
         return Response(ItemSerializer(items, many=True).data)
 
@@ -30,23 +31,23 @@ class ItemDetail(APIView):
 
     @staticmethod
     def post(request, item_id):
-        status = get_status_by_user_item(request.user.id, item_id)
+        item_status = get_status_by_user_item(request.user.id, item_id)
 
         like = request.data.get('like', None)
         if like == 'True':
-            status.as_like()
+            item_status.as_like()
         elif like == 'False':
-            status.as_unlike()
+            item_status.as_unlike()
 
         save = request.data.get('save', None)
         if save == 'True':
-            status.as_save()
+            item_status.as_save()
         elif save == 'False':
-            status.as_unsave()
+            item_status.as_unsave()
 
         web = request.data.get('web', None)
-        if web:
-            status.as_web()
+        if web == 'True':
+            item_status.as_web()
 
         return Response(status=status.HTTP_201_CREATED)
 
@@ -74,6 +75,8 @@ class ItemSimilarity(ListAPIView):
 
 
 class ItemSummary(ListAPIView):
+    serializer_class = serializers.Serializer
+
     def get_queryset(self):
         return get_summary(self.request.user.id)
 

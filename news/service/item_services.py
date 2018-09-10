@@ -27,16 +27,13 @@ def get_status_by_user_item(user_id, item_id):
 
 def get_last_items_by_user(user_id, unview=False):
     if unview:
-        return Profile.objects.get(user__id=user_id).sections.all()\
-            .values('feeds__id', 'feeds__title', 'feeds__items__id', 'feeds__items__title',
-                    'feeds__items__description', 'feeds__items__pubDate', 'feeds__items__image')\
-            .order_by('-feeds__items__pubDate')
+        items_id = Profile.objects.get(user__id=user_id).sections.all()\
+            .values_list('feeds__items', flat=True)
     else:
-        return Profile.objects.get(user__id=user_id).statuses.all().\
-            filter(view=False).\
-            values('item__feed_id', 'item__feed__title', 'item_id', 'item__title',
-                   'item__description', 'item__pubDate', 'item__image').\
-            order_by('-item__pubDate')
+        items_id = Profile.objects.get(user__id=user_id).statuses.all().filter(view=False)\
+            .values_list('item', flat=True)
+
+    return Item.objects.filter(id__in=items_id).order_by('-pubDate')
 
 
 def get_item_today_by_section(section_id, days=0, hours=0):
@@ -47,6 +44,7 @@ def get_item_today_by_section(section_id, days=0, hours=0):
 
 
 def get_item_similarity(item_id, limit, user_id):
+    # TODO Item Manager
     more_results = Item.objects.get_more_like_this('article', item_id, limit). \
         filter(statuses__user__user_id=user_id)\
         .order_by('-pubDate')
