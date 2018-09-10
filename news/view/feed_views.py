@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from news.serializer.serializers import FeedSerializer, FeedFormSerializer
+from news.serializers import FeedSerializer, FeedFormSerializer
 from news.service.feed_services import get_feed, all_feeds_link, delete_feed, get_feeds_by_user
 
 

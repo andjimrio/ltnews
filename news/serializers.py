@@ -1,12 +1,19 @@
 from rest_framework import serializers
-from news.models import Profile, Section, Feed, Item
+from news.models import Profile, Section, Feed, Item, User
 from news.utility.populate_utilities import populate_rss
+
+
+class UserSerializer(serializers.ModelSerializer):
+    # TODO Link with Profile
+    class Meta:
+        model = User
+        fields = ('email', 'first_name', 'last_name')
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = '__all__'
+        exclude = ('user',)
 
 
 class SectionSerializer(serializers.ModelSerializer):

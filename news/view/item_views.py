@@ -2,7 +2,7 @@ from rest_framework import status, serializers
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from news.serializer.serializers import ItemSerializer
+from news.serializers import ItemSerializer
 from news.service.item_services import get_item, get_last_items_by_user, get_status_by_user_item, get_item_query,\
     get_item_similarity, query_multifield_dict, get_item_recommend, stats_items, get_summary, get_item_saved
 

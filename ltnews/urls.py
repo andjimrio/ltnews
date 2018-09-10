@@ -9,10 +9,8 @@ urlpatterns = [
     path('auth/', include('rest_auth.urls')),
     path('registration/', include('rest_auth.registration.urls')),
 
-    path('profile/', include([
-        path('view/', profile_views.profile_view, name='profile_view'),
-        path('edit/', profile_views.profile_edit, name='profile_edit'),
-    ])),
+    path('profile/', profile_views.ProfileDetail.as_view(), name='profile_detail'),
+    path('profile/stats/<slug:stat>/', profile_views.ProfileStats.as_view(), name='profile_detail'),
 
     path('section/', section_views.SectionList.as_view(), name='section_list'),
     path('section/<int:section_id>/', section_views.SectionDetail.as_view(), name='section_detail'),

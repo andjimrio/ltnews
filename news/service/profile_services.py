@@ -1,9 +1,5 @@
-from django.db.models import Count
+from django.db.models import Count, F
 from news.models import Profile, Status, Keyword
-
-
-def all_profile():
-    return Profile.objects.all()
 
 
 def get_profile(user_id):
@@ -17,15 +13,17 @@ def get_filtered_status_by_profile(profile_id):
 
 def get_status_read_stats_by_user(profile_id):
     return Status.objects.filter(user_id=profile_id) \
-        .filter(read=True) \
-        .values('item__feed__sections__title')\
+        .filter(read=True)\
+        .annotate(section=F('item__feed__sections__title'))\
+        .values('section')\
         .annotate(total=Count('id'))
 
 
 def get_status_like_stats_by_user(profile_id):
     return Status.objects.filter(user_id=profile_id) \
         .filter(like=True) \
-        .values('item__feed__sections__title')\
+        .annotate(section=F('item__feed__sections__title'))\
+        .values('section')\
         .annotate(total=Count('id'))
 
 
