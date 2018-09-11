@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from news.view import feed_views, item_views, profile_views, section_views
+from news.view import feed_views, item_views, profile_views, section_views, comment_views
 
 
 urlpatterns = [
@@ -27,4 +27,7 @@ urlpatterns = [
     path('item/summary/', item_views.ItemSummary.as_view(), name='item_summary'),
     path('item/search/', item_views.ItemSearch.as_view(), name='item_search'),
     path('item/saved/', item_views.ItemSaved.as_view(), name='item_saved'),
+
+    path('item/<int:item_id>/comments/', comment_views.CommentList.as_view(), name='comment_list'),
+    path('comment/<int:comment_id>/', comment_views.CommentDetail.as_view(), name='comment_detail'),
 ]

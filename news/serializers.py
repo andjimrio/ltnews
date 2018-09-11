@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from news.models import Profile, Section, Feed, Item, User
+from news.models import Profile, Section, Feed, Item, User, Comment
 from news.utility.populate_utilities import populate_rss
 
 
@@ -19,7 +19,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class SectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Section
-        fields = ('id', 'title', 'description')
+        exclude = ('user',)
 
 
 class FeedSerializer(serializers.ModelSerializer):
@@ -47,4 +47,13 @@ class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
+        fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    item = serializers.PrimaryKeyRelatedField(read_only=True)
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Comment
         fields = '__all__'
