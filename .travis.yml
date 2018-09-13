@@ -29,9 +29,11 @@ before_script:
   - psql -c "ALTER USER $DB_USER CREATEDB;" -U postgres
   - psql -c "CREATE DATABASE $DB_NAME;" -U postgres
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;" -U postgres
-  - cd $TRAVIS_BUILD_DIR/ltnews-backend/
-  - rm -r metronus_app/migrations/
+  - cd $TRAVIS_BUILD_DIR/
+  - rm -r news/migrations/
 
 script:
   - python3 manage.py makemigrations --noinput && python3 manage.py makemigrations metronus_app --noinput
   - python3 manage.py migrate --noinput
+  - coverage run --source=. manage.py test
+  - mv .coverage ../
