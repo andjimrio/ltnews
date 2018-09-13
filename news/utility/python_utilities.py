@@ -35,7 +35,7 @@ def redo_date(dic, string):
     if string in dic:
         try:
             return timezone.localtime(parse(dic[string]))
-        except Exception:
+        except ValueError:
             pass
 
     return timezone.now()
