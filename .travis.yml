@@ -12,9 +12,9 @@ env:
     - DJANGO_SETTINGS_MODULE=ltnews.settings
     - PYTHONPATH=$HOME/builds/ltnews-backend/ltnews
     - PIP_USE_MIRRORS=true
-    - DB_NAME=ltnews_db_travis
-    - DB_USER=ltnews_user_travis
-    - DB_PASS=ltnews_pass_travis
+    - DB_NAME=django_psql_db
+    - DB_USER=django_psql
+    - DB_PASS=django_psql
     - DJANGO_SECRET_KEY=travistravistravistravistravistravistravis
     - MAIL_HOST='smtp.gmail.com'
     - MAIL_PORT=587
