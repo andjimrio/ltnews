@@ -1,0 +1,37 @@
+dist: trusty
+sudo: required
+language: python
+python: 3.7
+
+services:
+  - postgresql
+
+env:
+  global:
+    - DJANGO=2.0.7
+    - DJANGO_SETTINGS_MODULE=ltnews.settings
+    - PYTHONPATH=$HOME/builds/ltnews-backend/ltnews
+    - PIP_USE_MIRRORS=true
+    - DB_NAME=ltnews_db_travis
+    - DB_USER=ltnews_user_travis
+    - DB_PASS=ltnews_pass_travis
+    - DJANGO_SECRET_KEY=travistravistravistravistravistravistravis
+    - MAIL_HOST='smtp.gmail.com'
+    - MAIL_PORT=587
+    - MAIL_USER='ltnewsapp@gmail.com'
+    - MAIL_DEFAULTFROM='LTNews APP <ltnewsapp@gmail.com>'
+
+install:
+  - pip install -r requirements.txt
+
+before_script:
+  - psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASS';" -U postgres
+  - psql -c "ALTER USER $DB_USER CREATEDB;" -U postgres
+  - psql -c "CREATE DATABASE $DB_NAME;" -U postgres
+  - psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;" -U postgres
+  - cd $TRAVIS_BUILD_DIR/ltnews-backend/
+  - rm -r metronus_app/migrations/
+
+script:
+  - python3 manage.py makemigrations --noinput && python3 manage.py makemigrations metronus_app --noinput
+  - python3 manage.py migrate --noinput
