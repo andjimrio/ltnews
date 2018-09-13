@@ -58,7 +58,32 @@ class SectionTestCase(APITestCase):
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
     def test_detail_put_ok(self):
-        pass
+        title = "other_title"
+        section = self.__get_sections().first()
+        response = self.client.put('/section/{}/'.format(section.id), {"title": title})
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(title, Section.objects.get(id=section.id).title)
+
+    def test_detail_put_ko_json(self):
+        section = self.__get_sections().first()
+        response = self.client.put('/section/{}/'.format(section.id), {"description": "other_description"})
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
+    def test_detail_put_ko_user(self):
+        section_id = self.__get_sections().first().id + 3
+        response = self.client.put('/section/{}/'.format(section_id), {"title": "other_title"})
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+
+    def test_detail_delete_ok(self):
+        section_id = self.__get_sections().first().id
+        response = self.client.delete('/section/{}/'.format(section_id))
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+        self.assertFalse(Section.objects.filter(id=section_id).exists())
+
+    def test_detail_delete_ko_user(self):
+        section_id = self.__get_sections().first().id + 3
+        response = self.client.delete('/section/{}/'.format(section_id))
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
     def __get_sections(self):
         return Section.objects.filter(user__user__username=self.username)
