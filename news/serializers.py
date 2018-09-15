@@ -16,18 +16,20 @@ class ProfileSerializer(serializers.ModelSerializer):
         exclude = ('user',)
 
 
-class SectionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Section
-        exclude = ('user',)
-
-
 class FeedSerializer(serializers.ModelSerializer):
     sections = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Feed
         fields = '__all__'
+
+
+class SectionSerializer(serializers.ModelSerializer):
+    feeds = FeedSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Section
+        exclude = ('user',)
 
 
 class FeedFormSerializer(serializers.Serializer):
