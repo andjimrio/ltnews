@@ -3,7 +3,7 @@ from collections import Counter
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
-from news.models import Item, Profile, Section, Status
+from news.models import Item, Profile, Section, Status, Feed
 from news.utility.python_utilities import floor_log
 from news.service.profile_services import get_profile, get_keywords_by_user
 from news.service.section_services import get_sections_by_user
@@ -34,6 +34,10 @@ def get_last_items_by_user(user_id, unview=False):
             .values_list('item', flat=True)
 
     return Item.objects.filter(id__in=items_id).order_by('-pubDate')
+
+
+def get_last_items_by_feed(feed_id):
+    return Feed.objects.get(id=feed_id).items.order_by('-pubDate')
 
 
 def get_item_today_by_section(section_id, days=0, hours=0):

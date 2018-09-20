@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('feed/', feed_views.FeedList.as_view(), name='feed_list'),
     path('feed/<int:feed_id>/', feed_views.FeedDetail.as_view(), name='feed_detail'),
+    path('feed/<int:feed_id>/items/', feed_views.FeedItems.as_view(), name='feed_items'),
     path('feed/links/', feed_views.FeedLinks.as_view(), name='feed_links'),
 
     path('item/', item_views.ItemList.as_view(), name='item_list'),
