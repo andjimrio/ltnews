@@ -1,3 +1,5 @@
+from builtins import print
+
 from rest_framework import status, serializers
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
@@ -32,21 +34,24 @@ class ItemDetail(APIView):
     @staticmethod
     def post(request, item_id):
         item_status = get_status_by_user_item(request.user.id, item_id)
+        print(request.data)
 
         like = request.data.get('like', None)
-        if like == 'True':
-            item_status.as_like()
-        elif like == 'False':
-            item_status.as_unlike()
+        if like is not None:
+            if like:
+                item_status.as_like()
+            else:
+                item_status.as_unlike()
 
         save = request.data.get('save', None)
-        if save == 'True':
-            item_status.as_save()
-        elif save == 'False':
-            item_status.as_unsave()
+        if save is not None:
+            if save:
+                item_status.as_save()
+            else:
+                item_status.as_unsave()
 
         web = request.data.get('web', None)
-        if web == 'True':
+        if web:
             item_status.as_web()
 
         return Response(status=status.HTTP_201_CREATED)
