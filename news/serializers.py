@@ -4,16 +4,17 @@ from news.utility.populate_utilities import populate_rss
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # TODO Link with Profile
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'date_joined')
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Profile
-        exclude = ('user',)
+        fields = '__all__'
 
 
 class FeedSerializer(serializers.ModelSerializer):
