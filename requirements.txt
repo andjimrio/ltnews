@@ -8,3 +8,4 @@ django-rest-auth==0.9.3
 django-allauth==0.38.0
 django-cors-headers==2.4.0
 djangorestframework==3.9.0
+django-cron==0.5.1

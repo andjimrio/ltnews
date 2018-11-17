@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'news.apps.NewsConfig',
 
     'corsheaders',
+    'django_cron',
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -59,6 +60,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CRON_CLASSES = [
+    'ltnews.cron.update_rss',
 ]
 
 ROOT_URLCONF = 'ltnews.urls'

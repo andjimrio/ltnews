@@ -70,6 +70,13 @@ class Item(models.Model):
     class Meta:
         ordering = ('-pubDate', )
 
+    def __create_status(self):
+        for section in self.feed.sections.all():
+            Status.objects.get_or_create(user_id=section.user.id, item_id=self.id)
+
+    def on_save(self):
+        self.__create_status()
+
 
 class Status(models.Model):
     """

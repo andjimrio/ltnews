@@ -76,8 +76,8 @@ def __populate_item(post, feed_id):
 
         top_image = article.top_image
         text = article.text
-    except Exception:
-        print("ERROR-Article")
+    except Exception as excep:
+        print("ERROR-Article: {}".format(excep))
         print("\t" + post.title)
         print("\t" + post.link)
 
