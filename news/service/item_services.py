@@ -50,10 +50,9 @@ def get_item_today_by_section(section_id, days=0, hours=0):
 
 
 def get_item_similarity(item_id, limit, user_id):
-    text = Item.objects.get(id=item_id).article
     more_results = ItemDocument.search() \
-        .query(MoreLikeThis(like=text, fields=['article'], min_term_freq=1, max_query_terms=limit))\
-        .to_queryset()\
+        .query(MoreLikeThis(like={'_id': item_id}, fields=['article'], min_term_freq=1, max_query_terms=limit)) \
+        .to_queryset() \
         .filter(statuses__user__user_id=user_id).order_by('-pubDate')
     return more_results
 
