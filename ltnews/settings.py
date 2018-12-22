@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'corsheaders',
     'django_cron',
+    'django_elasticsearch_dsl',
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -65,6 +66,12 @@ MIDDLEWARE = [
 CRON_CLASSES = [
     'ltnews.cron.update_rss',
 ]
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'localhost:9200'
+    }
+}
 
 ROOT_URLCONF = 'ltnews.urls'
 

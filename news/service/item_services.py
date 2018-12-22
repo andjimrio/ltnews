@@ -2,8 +2,10 @@ from collections import Counter
 
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from elasticsearch_dsl.query import MoreLikeThis
 
 from news.models import Item, Profile, Section, Status, Feed
+from news.documents import ItemDocument
 from news.utility.python_utilities import floor_log
 from news.service.profile_services import get_profile, get_keywords_by_user
 from news.service.section_services import get_sections_by_user
@@ -27,10 +29,10 @@ def get_status_by_user_item(user_id, item_id):
 
 def get_last_items_by_user(user_id, unview=False):
     if unview:
-        items_id = Profile.objects.get(user__id=user_id).sections.all()\
+        items_id = Profile.objects.get(user__id=user_id).sections.all() \
             .values_list('feeds__items', flat=True)
     else:
-        items_id = Profile.objects.get(user__id=user_id).statuses.all().filter(view=False)\
+        items_id = Profile.objects.get(user__id=user_id).statuses.all().filter(view=False) \
             .values_list('item', flat=True)
 
     return Item.objects.filter(id__in=items_id).order_by('-pubDate')
@@ -43,28 +45,29 @@ def get_last_items_by_feed(feed_id):
 def get_item_today_by_section(section_id, days=0, hours=0):
     end_date = timezone.now()
     start_date = end_date - timezone.timedelta(days=days, hours=hours)
-    return Section.objects.filter(id=section_id).filter(feeds__items__pubDate__range=[start_date, end_date])\
+    return Section.objects.filter(id=section_id).filter(feeds__items__pubDate__range=[start_date, end_date]) \
         .values('feeds__items__id', 'feeds__items__title')
 
 
 def get_item_similarity(item_id, limit, user_id):
-    # TODO Item Manager
-    more_results = Item.objects.get_more_like_this('article', item_id, limit). \
-        filter(statuses__user__user_id=user_id)\
-        .order_by('-pubDate')
+    text = Item.objects.get(id=item_id).article
+    more_results = ItemDocument.search() \
+        .query(MoreLikeThis(like=text, fields=['article'], min_term_freq=1, max_query_terms=limit))\
+        .to_queryset()\
+        .filter(statuses__user__user_id=user_id).order_by('-pubDate')
     return more_results
 
 
 def get_item_query(query, profile_id):
     results = Item.objects.filter(keywords__term__contains=query) \
-        .filter(feed__sections__user_id=profile_id)\
+        .filter(feed__sections__user_id=profile_id) \
         .order_by('-pubDate')
     return results
 
 
 def query_multifield_dict(dict_query, profile_id):
     results = Item.objects.query_multifield_dict(dict_query) \
-        .filter(feed__sections__user_id=profile_id)\
+        .filter(feed__sections__user_id=profile_id) \
         .order_by('-pubDate')
     return results
 
@@ -75,16 +78,16 @@ def stats_items(queryset):
 
 
 def get_item_recommend(profile_id):
-    results = Item.objects.filter(feed__sections__user_id=profile_id)\
-        .exclude(statuses__view=True)\
-        .filter(keywords__in=get_keywords_by_user(profile_id))\
+    results = Item.objects.filter(feed__sections__user_id=profile_id) \
+        .exclude(statuses__view=True) \
+        .filter(keywords__in=get_keywords_by_user(profile_id)) \
         .order_by('-pubDate')
     return results
 
 
 def get_item_saved(user_id):
-    return Item.objects.filter(statuses__user__user_id=user_id)\
-        .filter(statuses__saves=True)\
+    return Item.objects.filter(statuses__user__user_id=user_id) \
+        .filter(statuses__saves=True) \
         .order_by('-pubDate')
 
 
