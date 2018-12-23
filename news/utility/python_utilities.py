@@ -50,3 +50,7 @@ def floor_log(number):
         return 0
     else:
         return floor(log(number))
+
+
+def calc_tf_idf(tf, df, docs):
+    return (1 + log(tf)) * (log(docs/df))
