@@ -46,11 +46,16 @@ class ItemDocument(DocType):
 
         return key_list[:index]
 
+    @classmethod
+    def get_internal_id(cls, item_id):
+        res = ItemDocument.search().filter("match", id=item_id).execute()
+        return res.hits[0].meta.id
+
     class Meta:
         model = Item
-        fields = ['title', 'pubDate', 'creator']
+        fields = ['id', 'title', 'pubDate', 'creator']
 
 
 if __name__ == '__main__':
-    qs = ItemDocument.search().query("match", article="messi")
+    qs = ItemDocument.search().query("match_phrase", article="messi")
     print(qs)

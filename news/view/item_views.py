@@ -6,7 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from news.serializers import ItemSerializer
 from news.service.item_services import get_item, get_last_items_by_user, get_status_by_user_item, get_item_query,\
-    get_item_similarity, query_multifield_dict, get_item_recommend, stats_items, get_summary, get_item_saved
+    get_item_similarity, query_multifield_dict, get_item_recommend, stats_items, get_summary, get_item_saved,\
+    get_item_keywords
 
 
 class ItemList(APIView):
@@ -77,6 +78,13 @@ class ItemSimilarity(ListAPIView):
 
     def get_queryset(self):
         return get_item_similarity(self.kwargs['item_id'], 6, self.request.user.id)
+
+
+class ItemKeywords(APIView):
+    @staticmethod
+    def get(request, item_id):
+        links = get_item_keywords(item_id)
+        return Response(links)
 
 
 class ItemSummary(ListAPIView):

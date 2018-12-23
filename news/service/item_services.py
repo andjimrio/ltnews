@@ -50,11 +50,17 @@ def get_item_today_by_section(section_id, days=0, hours=0):
 
 
 def get_item_similarity(item_id, limit, user_id):
+    doc_id = ItemDocument.get_internal_id(item_id)
     more_results = ItemDocument.search() \
-        .query(MoreLikeThis(like={'_id': item_id}, fields=['article'], min_term_freq=1, max_query_terms=limit)) \
+        .query(MoreLikeThis(like={'_id': doc_id}, fields=['article'], min_term_freq=1, max_query_terms=limit)) \
         .to_queryset() \
         .filter(statuses__user__user_id=user_id).order_by('-pubDate')
     return more_results
+
+
+def get_item_keywords(item_id):
+    doc_id = ItemDocument.get_internal_id(item_id)
+    return ItemDocument.keywords(doc_id)
 
 
 def get_item_query(query, profile_id):

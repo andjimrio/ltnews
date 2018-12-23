@@ -23,6 +23,7 @@ urlpatterns = [
     path('item/', item_views.ItemList.as_view(), name='item_list'),
     path('item/<int:item_id>/', item_views.ItemDetail.as_view(), name='item_detail'),
     path('item/<int:item_id>/similarity/', item_views.ItemSimilarity.as_view(), name='item_similarity'),
+    path('item/<int:item_id>/keywords/', item_views.ItemKeywords.as_view(), name='item_keywords'),
     path('item/query/<slug:query>/', item_views.ItemQuery.as_view(), name='item_query'),
     path('item/recommend/', item_views.ItemRecommend.as_view(), name='item_recommend'),
     path('item/summary/', item_views.ItemSummary.as_view(), name='item_summary'),
