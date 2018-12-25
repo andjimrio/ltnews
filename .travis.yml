@@ -15,7 +15,8 @@ addons:
 
 env:
   global:
-    - DJANGO=2.0.7
+    - PGPORT=5433
+    - DJANGO=2.1.3
     - DJANGO_SETTINGS_MODULE=ltnews.settings
     - PYTHONPATH=$HOME/builds/ltnews-backend/ltnews
     - PIP_USE_MIRRORS=true
