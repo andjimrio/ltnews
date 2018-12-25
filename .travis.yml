@@ -6,6 +6,13 @@ python: 3.6
 services:
   - postgresql
 
+addons:
+  postgresql: "10"
+  apt:
+    packages:
+    - postgresql-10
+    - postgresql-client-10
+
 env:
   global:
     - DJANGO=2.0.7
