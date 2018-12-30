@@ -5,6 +5,10 @@ from news.utility.populate_utilities import populate_rss
 
 
 class UserRegisterSerializer(RegisterSerializer):
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+    image = serializers.URLField(required=False)
+
     def update(self, instance, validated_data):
         super().update(instance, validated_data)
 
@@ -12,7 +16,12 @@ class UserRegisterSerializer(RegisterSerializer):
         super().create(validated_data)
 
     def custom_signup(self, request, user):
-        Profile.objects.create(user=user)
+        user.first_name = self.validated_data.get('first_name', '')
+        user.last_name = self.validated_data.get('last_name', '')
+        user.save(update_fields=['first_name', 'last_name'])
+
+        image = self.validated_data.get('image', '')
+        Profile.objects.create(user=user, image=image)
 
 
 class UserSerializer(serializers.ModelSerializer):
