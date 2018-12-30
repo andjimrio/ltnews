@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
+
     'news.apps.NewsConfig',
 
     'corsheaders',
@@ -47,9 +47,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
+
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'rest_auth.registration',
+    'allauth.socialaccount'
 ]
 
 MIDDLEWARE = [
@@ -166,6 +169,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
+}
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "news.serializers.UserRegisterSerializer"
 }
 
 # Django allauth (account registration email flow)

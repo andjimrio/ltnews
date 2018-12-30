@@ -1,6 +1,18 @@
 from rest_framework import serializers
+from rest_auth.registration.serializers import RegisterSerializer
 from news.models import Profile, Section, Feed, Item, User, Comment
 from news.utility.populate_utilities import populate_rss
+
+
+class UserRegisterSerializer(RegisterSerializer):
+    def update(self, instance, validated_data):
+        super().update(instance, validated_data)
+
+    def create(self, validated_data):
+        super().create(validated_data)
+
+    def custom_signup(self, request, user):
+        Profile.objects.create(user=user)
 
 
 class UserSerializer(serializers.ModelSerializer):
