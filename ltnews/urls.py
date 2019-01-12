@@ -5,6 +5,7 @@ from news.view import feed_views, item_views, profile_views, section_views, comm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('django.contrib.auth.urls')),
 
     path('auth/', include('rest_auth.urls')),
     path('registration/', include('rest_auth.registration.urls')),
