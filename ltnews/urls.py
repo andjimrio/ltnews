@@ -15,6 +15,7 @@ urlpatterns = [
 
     path('section/', section_views.SectionList.as_view(), name='section_list'),
     path('section/<int:section_id>/', section_views.SectionDetail.as_view(), name='section_detail'),
+    path('section/names/', section_views.SectionNames.as_view(), name='section_names'),
 
     path('feed/', feed_views.FeedList.as_view(), name='feed_list'),
     path('feed/<int:feed_id>/', feed_views.FeedDetail.as_view(), name='feed_detail'),

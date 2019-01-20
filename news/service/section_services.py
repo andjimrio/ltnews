@@ -27,3 +27,7 @@ def get_section_items(section_id):
         .values('id', 'title', 'items__id', 'items__title', 'items__description',
                 'items__pubDate', 'items__image')\
         .order_by('-items__pubDate')
+
+
+def all_sections_names(user_id):
+    return Profile.objects.get(user__id=user_id).sections.values_list('title', flat=True)

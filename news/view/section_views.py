@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from news.serializers import SectionSerializer
-from news.service.section_services import get_section, delete_section, get_sections_by_user
+from news.service.section_services import get_section, delete_section, get_sections_by_user, all_sections_names
 
 
 class SectionList(APIView):
@@ -42,3 +42,10 @@ class SectionDetail(APIView):
     def delete(request, section_id):
         delete_section(section_id, request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class SectionNames(APIView):
+    @staticmethod
+    def get(request):
+        names = all_sections_names(request.user.id)
+        return Response(names)
