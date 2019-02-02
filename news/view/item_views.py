@@ -1,9 +1,8 @@
-from builtins import print
-
 from rest_framework import status, serializers
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from news.serializers import ItemSerializer
 from news.service.item_services import get_item, get_last_items_by_user, get_status_by_user_item, get_item_query,\
     get_item_similarity, query_multifield_dict, get_item_recommend, stats_items, get_summary, get_item_saved,\
@@ -11,8 +10,10 @@ from news.service.item_services import get_item, get_last_items_by_user, get_sta
 
 
 class ItemList(APIView):
-    @staticmethod
-    def get(request):
+    serializer_class = ItemSerializer
+    pagination_class = PageNumberPagination()
+
+    def get(self, request):
         items = get_last_items_by_user(request.user.id)
 
         follow = request.GET.get('follow', None)
@@ -21,7 +22,9 @@ class ItemList(APIView):
                 get_status_by_user_item(request.user.id, item_id).as_view()
         request.session['news_ids'] = [x.id for x in items]
 
-        return Response(ItemSerializer(items, many=True).data)
+        page = self.pagination_class.paginate_queryset(items, request)
+        serializer = self.serializer_class(page, many=True)
+        return self.pagination_class.get_paginated_response(serializer.data)
 
 
 class ItemDetail(APIView):
@@ -35,7 +38,6 @@ class ItemDetail(APIView):
     @staticmethod
     def post(request, item_id):
         item_status = get_status_by_user_item(request.user.id, item_id)
-        print(request.data)
 
         like = request.data.get('like', None)
         if like is not None:
@@ -89,6 +91,7 @@ class ItemKeywords(APIView):
 
 class ItemSummary(ListAPIView):
     serializer_class = serializers.Serializer
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
         return get_summary(self.request.user.id)
@@ -96,6 +99,7 @@ class ItemSummary(ListAPIView):
 
 class ItemSaved(ListAPIView):
     serializer_class = ItemSerializer
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
         return get_item_saved(self.request.user.id)
@@ -103,6 +107,7 @@ class ItemSaved(ListAPIView):
 
 class ItemSearch(ListAPIView):
     serializer_class = ItemSerializer
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
         params = ['title', 'creator', 'description', 'feed']

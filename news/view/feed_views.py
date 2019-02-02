@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from news.serializers import FeedSerializer, FeedFormSerializer, ItemSerializer
 from news.service.feed_services import get_feed, all_feeds_link, delete_feed, get_feeds_by_user
 from news.service.item_services import get_last_items_by_feed
@@ -44,7 +45,11 @@ class FeedLinks(APIView):
 
 
 class FeedItems(APIView):
-    @staticmethod
-    def get(request, feed_id):
-        items = get_last_items_by_feed(feed_id)
-        return Response(ItemSerializer(items, many=True).data)
+    serializer_class = ItemSerializer
+    pagination_class = PageNumberPagination()
+
+    def get(self, request, feed_id):
+        queryset = get_last_items_by_feed(feed_id)
+        page = self.pagination_class.paginate_queryset(queryset, request)
+        serializer = self.serializer_class(page, many=True)
+        return self.pagination_class.get_paginated_response(serializer.data)

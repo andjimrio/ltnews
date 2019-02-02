@@ -169,6 +169,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'PAGE_SIZE': 20
 }
 
 REST_AUTH_REGISTER_SERIALIZERS = {
