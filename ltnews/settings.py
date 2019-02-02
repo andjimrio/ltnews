@@ -25,7 +25,7 @@ SECRET_KEY = '9rv^%()o8lkoi2ge)eoy5%_m!qs()p0jw_gld8it(s_an-g1x$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['159.89.15.64', 'ltnews.cf', 'www.ltnews.cf']
 
 
 # Application definition
@@ -149,7 +149,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 
 STATIC_URL = '/static/'
 
