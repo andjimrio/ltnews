@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_auth.registration.serializers import RegisterSerializer
-from news.models import Profile, Section, Feed, Item, User, Comment
+from news.models import Profile, Section, Feed, Status, Item, User, Comment
 from news.utility.populate_utilities import populate_rss
+from news.service.item_services import get_status_by_user_item
 
 
 class UserRegisterSerializer(RegisterSerializer):
@@ -66,12 +67,27 @@ class FeedFormSerializer(serializers.Serializer):
         pass
 
 
+class StatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Status
+        exclude = ('id', 'user', 'item')
+
+
 class ItemSerializer(serializers.ModelSerializer):
     feed = serializers.PrimaryKeyRelatedField(read_only=True)
+    status = serializers.SerializerMethodField()
+
+    def get_status(self, obj):
+        request = self.context.get("request")
+        if request and request.user:
+            return StatusSerializer(get_status_by_user_item(request.user.id, obj.pk)).data
+        else:
+            return None
 
     class Meta:
         model = Item
         fields = '__all__'
+        extra_fields = ('status',)
 
 
 class CommentSerializer(serializers.ModelSerializer):

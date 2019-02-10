@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from news.serializers import ItemSerializer
-from news.service.item_services import get_item, get_last_items_by_user, get_status_by_user_item, get_item_query,\
-    get_item_similarity, query_multifield_dict, get_item_recommend, stats_items, get_summary, get_item_saved,\
+from news.service.item_services import get_item, get_last_items_by_user, get_status_by_user_item, get_item_query, \
+    get_item_similarity, query_multifield_dict, get_item_recommend, stats_items, get_summary, get_item_saved, \
     get_item_keywords
 
 
@@ -23,7 +23,7 @@ class ItemList(APIView):
         request.session['news_ids'] = [x.id for x in items]
 
         page = self.pagination_class.paginate_queryset(items, request)
-        serializer = self.serializer_class(page, many=True)
+        serializer = self.serializer_class(page, many=True, context={'request': self.request})
         return self.pagination_class.get_paginated_response(serializer.data)
 
 
@@ -32,11 +32,11 @@ class ItemDetail(APIView):
     def get(request, item_id):
         item = get_item(item_id)
         get_status_by_user_item(request.user.id, item_id).as_read()
-        serializer = ItemSerializer(item)
+        serializer = ItemSerializer(item, context={'request': request})
         return Response(serializer.data)
 
     @staticmethod
-    def post(request, item_id):
+    def put(request, item_id):
         item_status = get_status_by_user_item(request.user.id, item_id)
 
         like = request.data.get('like', None)
@@ -46,7 +46,7 @@ class ItemDetail(APIView):
             else:
                 item_status.as_unlike()
 
-        save = request.data.get('save', None)
+        save = request.data.get('saves', None)
         if save is not None:
             if save:
                 item_status.as_save()
@@ -65,7 +65,7 @@ class ItemQuery(APIView):
     def get(request, query):
         items = get_item_query(query, request.user.profile.id)
         request.session['stats_items'] = stats_items(items)
-        return Response(ItemSerializer(items, many=True).data)
+        return Response(ItemSerializer(items, many=True, context={'request': request}).data)
 
 
 class ItemRecommend(ListAPIView):
