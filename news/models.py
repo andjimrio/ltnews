@@ -1,3 +1,5 @@
+from builtins import super
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -74,7 +76,8 @@ class Item(models.Model):
         for section in self.feed.sections.all():
             Status.objects.get_or_create(user_id=section.user.id, item_id=self.id)
 
-    def on_save(self):
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
         self.__create_status()
 
 
