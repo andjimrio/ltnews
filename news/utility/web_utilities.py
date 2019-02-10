@@ -40,4 +40,11 @@ def reconvert_html(html_doc):
         for hs in soup.findAll("h{}".format(x)):
             hs['class'] = hs.get('class', []) + ['small-title']
 
-    return soup.prettify("utf-8")
+    text = soup.prettify("utf-8").decode()
+
+    replace_dict = {'\n\n': '<br/><br/>'}
+
+    for k, v in replace_dict.items():
+        text = text.replace(k, v)
+
+    return text

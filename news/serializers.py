@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_auth.registration.serializers import RegisterSerializer
 from news.models import Profile, Section, Feed, Status, Item, User, Comment
 from news.utility.populate_utilities import populate_rss
+from news.utility.web_utilities import reconvert_html
 from news.service.item_services import get_status_by_user_item
 
 
@@ -74,8 +75,16 @@ class StatusSerializer(serializers.ModelSerializer):
 
 
 class ItemSerializer(serializers.ModelSerializer):
-    feed = serializers.PrimaryKeyRelatedField(read_only=True)
+    feed = FeedSerializer(read_only=True)
+    description_html = serializers.SerializerMethodField()
+    article_html = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
+
+    def get_description_html(self, obj):
+        return reconvert_html(obj.description)
+
+    def get_article_html(self, obj):
+        return reconvert_html(obj.article)
 
     def get_status(self, obj):
         request = self.context.get("request")
@@ -87,7 +96,7 @@ class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = '__all__'
-        extra_fields = ('status',)
+        extra_fields = ('status', 'descripcion_html', 'article_html')
 
 
 class CommentSerializer(serializers.ModelSerializer):
