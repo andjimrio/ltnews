@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '9rv^%()o8lkoi2ge)eoy5%_m!qs()p0jw_gld8it(s_an-g1x$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['159.89.15.64', 'ltnews.cf', 'www.ltnews.cf', '127.0.0.1', 'localhost']
 
