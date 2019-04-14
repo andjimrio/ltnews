@@ -70,7 +70,16 @@ def get_item_query(query, profile_id):
     return results
 
 
-def query_multifield_dict(dict_query, profile_id):
+def get_item_simple_search(query, limit, user_id):
+    results = ItemDocument.search()\
+        .query("multi_match", query=query, fields=['title', 'article'])\
+        .extra(size=limit) \
+        .to_queryset() \
+        .filter(statuses__user__user_id=user_id).order_by('-pubDate')
+    return results
+
+
+def get_item_advanced_search(dict_query, profile_id):
     results = Item.objects.query_multifield_dict(dict_query) \
         .filter(feed__sections__user_id=profile_id) \
         .order_by('-pubDate')

@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from news.serializers import ItemSerializer
 from news.service.item_services import get_item, get_last_items_by_user, get_status_by_user_item, get_item_query, \
-    get_item_similarity, query_multifield_dict, get_item_recommend, stats_items, get_summary, get_item_saved, \
-    get_item_keywords
+    get_item_similarity, get_item_simple_search, get_item_advanced_search, get_item_recommend, stats_items, get_summary, \
+    get_item_saved, get_item_keywords
 
 
 class ItemList(APIView):
@@ -79,7 +79,8 @@ class ItemSimilarity(ListAPIView):
     serializer_class = ItemSerializer
 
     def get_queryset(self):
-        return get_item_similarity(self.kwargs['item_id'], 6, self.request.user.id)
+        limit = 6
+        return get_item_similarity(self.kwargs['item_id'], limit, self.request.user.id)
 
 
 class ItemKeywords(APIView):
@@ -110,6 +111,6 @@ class ItemSearch(ListAPIView):
     pagination_class = PageNumberPagination
 
     def get_queryset(self):
-        params = ['title', 'creator', 'description', 'feed']
-        cleaned_data = [self.request.query_params.get(param, None) for param in params]
-        return query_multifield_dict(cleaned_data, self.request.user.profile.id)
+        cleaned_data = self.request.query_params.get('query', '')
+        limit = 24
+        return get_item_simple_search(cleaned_data, limit, self.request.user.id)
