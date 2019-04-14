@@ -2,6 +2,7 @@ from collections import Counter
 
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from elasticsearch_dsl import Q
 from elasticsearch_dsl.query import MoreLikeThis
 
 from news.models import Item, Profile, Section, Status, Feed
@@ -70,19 +71,17 @@ def get_item_query(query, profile_id):
     return results
 
 
-def get_item_simple_search(query, limit, user_id):
+def get_item_search(query, limit, user_id):
+    if isinstance(query, str):
+        query_in = Q("multi_match", query=query, fields=['title', 'article'])
+    else:
+        query_in = Q('bool', must=[Q({'match': {k: v}}) for k, v in query.items()])
+
     results = ItemDocument.search()\
-        .query("multi_match", query=query, fields=['title', 'article'])\
+        .query(query_in)\
         .extra(size=limit) \
         .to_queryset() \
         .filter(statuses__user__user_id=user_id).order_by('-pubDate')
-    return results
-
-
-def get_item_advanced_search(dict_query, profile_id):
-    results = Item.objects.query_multifield_dict(dict_query) \
-        .filter(feed__sections__user_id=profile_id) \
-        .order_by('-pubDate')
     return results
 
 
