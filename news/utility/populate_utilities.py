@@ -3,10 +3,10 @@ from newspaper import Article
 
 from news.service.feed_services import get_feed_by_link, create_feed, exists_feed_id_by_link
 from news.service.section_services import create_section
+from news.service.keyword_services import create_keywords
 from news.service.item_services import exists_item_by_link, create_item
 from news.utility.python_utilities import redo_string, redo_date
 from news.utility.web_utilities import clean_html, extract_img_html
-
 
 def populate_rss(link, title_section, user_id):
     rss = feedparser.parse(link)
@@ -67,6 +67,7 @@ def get_article(link):
     return article
 
 
+
 def __populate_item(post, feed_id):
     top_image = ''
     text = ''
@@ -95,5 +96,6 @@ def __populate_item(post, feed_id):
                                 creator=post.get('author', ''),
                                 pubDate=redo_date(post, 'published'),
                                 feed_id=feed_id)
+    create_keywords(item)
 
     return item, created
