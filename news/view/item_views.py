@@ -79,7 +79,7 @@ class ItemSimilarity(ListAPIView):
     serializer_class = ItemSerializer
 
     def get_queryset(self):
-        limit = 6
+        limit = 3
         return get_item_similarity(self.kwargs['item_id'], limit, self.request.user.id)
 
 
@@ -118,6 +118,7 @@ class ItemSearch(ListAPIView):
             cleaned_data = query
         else:
             params = ['title', 'creator', 'article']
-            cleaned_data = {param: self.request.query_params.get(param, '') for param in params if param in self.request.query_params}
+            cleaned_data = {param: self.request.query_params.get(param, '') for param in params
+                            if param in self.request.query_params and self.request.query_params.get(param, '') != ''}
 
         return get_item_search(cleaned_data, limit, self.request.user.id)
