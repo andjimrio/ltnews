@@ -59,11 +59,6 @@ def get_item_similarity(item_id, limit, user_id):
     return more_results
 
 
-def get_item_keywords(item_id):
-    doc_id = ItemDocument.get_internal_id(item_id)
-    return ItemDocument.keywords(doc_id)
-
-
 def get_item_query(query, profile_id):
     results = Item.objects.filter(keywords__term__contains=query) \
         .filter(feed__sections__user_id=profile_id) \

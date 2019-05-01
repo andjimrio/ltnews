@@ -25,6 +25,9 @@ class ItemDocument(DocType):
 
     @classmethod
     def keywords(cls, es_id, field='article'):
+        if not es_id:
+            return []
+
         cn = connections.get_connection()
         keys = cn.termvectors(
             index='items',
@@ -41,7 +44,7 @@ class ItemDocument(DocType):
         key_dict = keys['term_vectors'][field]['terms']
 
         key_tfidf = {k: calc_tf_idf(v['term_freq'], v['doc_freq'], total['doc_count']) for k, v in key_dict.items()}
-        key_list = [k[0] for k in sorted(key_tfidf.items(), key=lambda kv: kv[1], reverse=True)]
+        key_list = [k[0] for k in sorted(key_tfidf.items(), key=lambda kv: kv[1], reverse=True) if not k[0].isnumeric()]
         index = floor_log(total['sum_ttf'] / total['doc_count'])
 
         return key_list[:index]
@@ -49,7 +52,7 @@ class ItemDocument(DocType):
     @classmethod
     def get_internal_id(cls, item_id):
         res = ItemDocument.search().filter("match", id=item_id).execute()
-        return res.hits[0].meta.id
+        return res.hits[0].meta.id if res.hits.total else None
 
     class Meta:
         model = Item

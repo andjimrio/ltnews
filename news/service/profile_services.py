@@ -3,7 +3,7 @@ from news.models import Profile, Status, Keyword
 
 
 def get_profile(user_id):
-    return Profile.objects.get(user=user_id)
+    return Profile.objects.get(user__id=user_id)
 
 
 def get_filtered_status_by_profile(profile_id):
