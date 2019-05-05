@@ -70,6 +70,7 @@ class ItemQuery(APIView):
 
 class ItemRecommend(ListAPIView):
     serializer_class = ItemSerializer
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
         return get_item_recommend(self.request.user.profile.id)

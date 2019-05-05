@@ -13,8 +13,9 @@ def recommend_based_content(profile):
 
     delete_keyword_by_user(profile.id)
     number = floor_log(len(cont_user))
+    keywords = cont_user.most_common(number)
 
-    for tag_x, tag_y in cont_user.most_common(number):
+    for tag_x, tag_y in keywords:
         update_keyword_by_user(profile, tag_x)
 
-    return dict(cont_user)
+    return dict(cont_user), keywords

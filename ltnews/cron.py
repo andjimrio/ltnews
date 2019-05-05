@@ -43,7 +43,8 @@ class calculate_keywords(CronJobBase):
             print('\t\tINI {}'.format(profile))
 
             try:
-                recommend_based_content(profile)
+                critics, keywords = recommend_based_content(profile)
+                print('\t\t\tKeywords: {}'.format(keywords))
             except Exception as excep:
                 print("Error de cron: {}".format(excep))
 

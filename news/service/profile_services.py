@@ -1,8 +1,10 @@
 from django.db.models import Count, F
 from news.models import Profile, Status, Keyword
 
+
 def all_profile():
     return Profile.objects.all()
+
 
 def get_profile(user_id):
     return Profile.objects.get(user__id=user_id)
@@ -27,10 +29,6 @@ def get_status_like_stats_by_user(profile_id):
         .annotate(section=F('item__feed__sections__title'))\
         .values('section')\
         .annotate(total=Count('id'))
-
-
-def get_keywords_by_user(user_id):
-    return Keyword.objects.filter(users__user=user_id).all()
 
 
 def exists_user(username):

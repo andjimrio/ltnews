@@ -8,7 +8,8 @@ from elasticsearch_dsl.query import MoreLikeThis
 from news.models import Item, Profile, Section, Status, Feed
 from news.documents import ItemDocument
 from news.utility.python_utilities import floor_log
-from news.service.profile_services import get_profile, get_keywords_by_user
+from news.service.profile_services import get_profile
+from news.service.keyword_services import get_keywords_by_user
 from news.service.section_services import get_sections_by_user
 
 
