@@ -34,6 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    keywords = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Profile
