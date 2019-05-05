@@ -82,7 +82,7 @@ def __populate_item(post, feed_id):
         print("\t" + post.title)
         print("\t" + post.link)
 
-    if text == '':
+    if text == '' or text < post.description:
         text = clean_html(post.get('description', ''))
 
     if top_image == '':

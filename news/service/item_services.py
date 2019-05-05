@@ -28,6 +28,10 @@ def get_status_by_user_item(user_id, item_id):
     return Status.objects.get_or_create(user_id=get_profile(user_id).id, item_id=item_id)[0]
 
 
+def get_filtered_status_by_user(user_id):
+    return Status.objects.filter(user_id=user_id, read=True)
+
+
 def get_last_items_by_user(user_id, unview=False):
     if unview:
         items_id = Profile.objects.get(user__id=user_id).sections.all() \

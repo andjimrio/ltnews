@@ -11,6 +11,12 @@ def create_keywords(item):
             keyword, created = Keyword.objects.get_or_create(term=term)
             keyword.items.add(item)
             keyword.users.add(section.user)
+            keyword.save()
+
+def update_keyword_by_user(profile, term):
+    keyword, created = Keyword.objects.get_or_create(term=term)
+    keyword.users.add(profile)
+    keyword.save()
 
 
 def get_item_keywords(item_id, profile_id):
@@ -20,3 +26,6 @@ def get_item_keywords(item_id, profile_id):
     else:
         doc_id = ItemDocument.get_internal_id(item_id)
         return ItemDocument.keywords(doc_id)
+
+def delete_keyword_by_user(profile_id):
+    Keyword.objects.filter(users__id=profile_id).delete()

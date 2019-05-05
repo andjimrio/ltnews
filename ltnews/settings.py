@@ -67,7 +67,7 @@ MIDDLEWARE = [
 ]
 
 CRON_CLASSES = [
-    'ltnews.cron.update_rss',
+    'ltnews.cron.update_rss', 'ltnews.cron.calculate_keywords',
 ]
 
 ELASTICSEARCH_DSL = {

@@ -1,6 +1,8 @@
 from django.db.models import Count, F
 from news.models import Profile, Status, Keyword
 
+def all_profile():
+    return Profile.objects.all()
 
 def get_profile(user_id):
     return Profile.objects.get(user__id=user_id)
