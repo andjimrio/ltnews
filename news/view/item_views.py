@@ -61,11 +61,15 @@ class ItemDetail(APIView):
 
 
 class ItemQuery(APIView):
-    @staticmethod
-    def get(request, query):
+    serializer_class = ItemSerializer
+    pagination_class = PageNumberPagination()
+
+    def get(self, request, query):
         items = get_item_query(query, request.user.profile.id)
-        request.session['stats_items'] = stats_items(items)
-        return Response(ItemSerializer(items, many=True, context={'request': request}).data)
+
+        page = self.pagination_class.paginate_queryset(items, request)
+        serializer = self.serializer_class(page, many=True, context={'request': self.request})
+        return self.pagination_class.get_paginated_response(serializer.data)
 
 
 class ItemRecommend(ListAPIView):
