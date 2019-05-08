@@ -1,13 +1,12 @@
-from collections import Counter
-
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.db.models import Max
 from elasticsearch_dsl import Q
 from elasticsearch_dsl.query import MoreLikeThis
 
-from news.models import Item, Profile, Section, Status, Feed
+from news.models import Item, Profile, Status, Feed
 from news.documents import ItemDocument
-from news.utility.python_utilities import floor_log
+from news.utility.analysis_utilities import SectionSummaryKeywords
 from news.service.profile_services import get_profile
 from news.service.keyword_services import get_keywords_by_user
 from news.service.section_services import get_sections_by_user
@@ -48,11 +47,12 @@ def get_last_items_by_feed(feed_id):
     return Feed.objects.get(id=feed_id).items.order_by('-pubDate')
 
 
-def get_item_today_by_section(section_id, days=0, hours=0):
-    end_date = timezone.now()
+def get_item_today_by_section(section_id, days=0, hours=0, now=False):
+    end_date = Item.objects.filter(feed__sections=section_id).aggregate(end=Max('pubDate'))['end']\
+        if not now else timezone.now()
     start_date = end_date - timezone.timedelta(days=days, hours=hours)
-    return Section.objects.filter(id=section_id).filter(feeds__items__pubDate__range=[start_date, end_date]) \
-        .values('feeds__items__id', 'feeds__items__title')
+
+    return Item.objects.filter(feed__sections=section_id, pubDate__range=[start_date, end_date])
 
 
 def get_item_similarity(item_id, limit, user_id):
@@ -86,11 +86,6 @@ def get_item_search(query, limit, user_id):
     return results
 
 
-def stats_items(queryset):
-    stats = [x.pubDate.strftime("%m/%Y") for x in queryset]
-    return dict(Counter(stats))
-
-
 def get_item_recommend(profile_id):
     results = Item.objects.filter(feed__sections__user_id=profile_id) \
         .exclude(statuses__view=True) \
@@ -106,66 +101,18 @@ def get_item_saved(user_id):
 
 
 def get_summary(user_id):
-    summary_keywords = dict()
+    summary_keywords = []
 
     for section in get_sections_by_user(user_id):
         section_summary_keywords = SectionSummaryKeywords(section.title)
         for item in get_item_today_by_section(section.id, days=1):
-            keywords = get_item(item['feeds__items__id']).keywords.all()
+            keywords = item.keywords.all()
             if len(keywords) > 0:
-                section_summary_keywords.add_keyword(keywords, item['feeds__items__id'], item['feeds__items__title'])
+                section_summary_keywords.add_keyword(keywords, item.id, item.title)
 
-        summary_keywords[section.title] = section_summary_keywords.most_common()
+        commons = section_summary_keywords.most_common()
+        if len(commons)>0:
+            summary_keywords.append({'id': section.id, 'title': section.title, 'keywords': commons})
 
     return summary_keywords
 
-
-class SectionSummaryKeywords:
-    def __init__(self, section_title):
-        self.section = section_title
-        self.keywords_counters = dict()
-        self.counts_counters = Counter()
-
-    def add_keyword(self, keywords, item_id, item_title):
-        exists = False
-        keyword = keywords[0]
-
-        for key in keywords:
-            if key in self.keywords_counters:
-                exists = True
-                keyword = key
-                break
-
-        if exists:
-            self.keywords_counters[keyword].update(item_id, item_title)
-        else:
-            keyword_counter = KeywordCounter(keyword, item_id, item_title)
-            self.keywords_counters[keyword] = keyword_counter
-
-        self.counts_counters[keyword] += 1
-
-    def most_common(self, number=None):
-        if not number and self.counts_counters:
-            number = floor_log(len(self.counts_counters))
-        else:
-            number = 0
-        return [self.keywords_counters[keyword[0]] for keyword in self.counts_counters.most_common(number)]
-
-    def __str__(self):
-        return "SSK: {} - {}".format(self.section, len(self.keywords_counters))
-
-
-class KeywordCounter:
-    def __init__(self, keyword, item_id, item_title):
-        self.keyword = keyword
-        self.counts = 1
-        self.sample_title = item_title
-        self.items = dict()
-        self.items[item_id] = item_title
-
-    def update(self, item_id, item_title):
-        self.counts += 1
-        self.items[item_id] = item_title
-
-    def __str__(self):
-        return "KC: {} - {}".format(self.keyword, self.counts)

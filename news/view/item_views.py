@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from news.serializers import ItemSerializer
 from news.service.item_services import get_item, get_last_items_by_user, get_status_by_user_item, get_item_query, \
-    get_item_similarity, get_item_search, get_item_recommend, stats_items, get_summary, get_item_saved
+    get_item_similarity, get_item_search, get_item_recommend, get_summary, get_item_saved
 from news.service.keyword_services import get_item_keywords
 
 
@@ -95,12 +95,11 @@ class ItemKeywords(APIView):
         return Response(links)
 
 
-class ItemSummary(ListAPIView):
-    serializer_class = serializers.Serializer
-    pagination_class = PageNumberPagination
-
-    def get_queryset(self):
-        return get_summary(self.request.user.id)
+class ItemSummary(APIView):
+    @staticmethod
+    def get(request):
+        summary = get_summary(request.user.id)
+        return Response(summary)
 
 
 class ItemSaved(ListAPIView):
