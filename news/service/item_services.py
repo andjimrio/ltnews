@@ -48,7 +48,7 @@ def get_last_items_by_feed(feed_id):
 
 
 def get_item_today_by_section(section_id, days=0, hours=0, now=False):
-    end_date = Item.objects.filter(feed__sections=section_id).aggregate(end=Max('pubDate'))['end']\
+    end_date = Item.objects.filter(feed__sections=section_id).aggregate(end=Max('pubDate'))['end'] \
         if not now else timezone.now()
     start_date = end_date - timezone.timedelta(days=days, hours=hours)
 
@@ -78,8 +78,8 @@ def get_item_search(query, limit, user_id):
     else:
         query_in = Q('bool', must=[Q({'match': {k: v}}) for k, v in query.items()])
 
-    results = ItemDocument.search()\
-        .query(query_in)\
+    results = ItemDocument.search() \
+        .query(query_in) \
         .extra(size=limit) \
         .to_queryset() \
         .filter(statuses__user__user_id=user_id).order_by('-pubDate')
@@ -100,19 +100,20 @@ def get_item_saved(user_id):
         .order_by('-pubDate')
 
 
-def get_summary(user_id):
+def get_summary(user_id, days=1, hours=0):
     summary_keywords = []
 
     for section in get_sections_by_user(user_id):
         section_summary_keywords = SectionSummaryKeywords(section.title)
-        for item in get_item_today_by_section(section.id, days=1):
+        for item in get_item_today_by_section(section.id, days=days, hours=hours):
             keywords = item.keywords.all()
             if len(keywords) > 0:
-                section_summary_keywords.add_keyword(keywords, item.id, item.title)
+                section_summary_keywords.add_keyword(keywords,
+                                                     {'id': item.id, 'title': item.title, 'feed_id': item.feed.id,
+                                                      'feed_title': item.feed.title})
 
         commons = section_summary_keywords.most_common()
-        if len(commons)>0:
+        if len(commons) > 0:
             summary_keywords.append({'id': section.id, 'title': section.title, 'keywords': commons})
 
     return summary_keywords
-

@@ -96,9 +96,11 @@ class ItemKeywords(APIView):
 
 
 class ItemSummary(APIView):
-    @staticmethod
-    def get(request):
-        summary = get_summary(request.user.id)
+    def get(self, request):
+        days = int(self.request.query_params.get('days', 1))
+        hours = int(self.request.query_params.get('hours', 0))
+
+        summary = get_summary(request.user.id, days, hours)
         return Response(summary)
 
 
