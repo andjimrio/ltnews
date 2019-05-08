@@ -17,7 +17,7 @@ class SectionSummaryKeywords:
                 self.keywords_counters[keyword].update(item)
             else:
                 self.keywords_counters[keyword] = KeywordCounter(keyword, item)
-                break
+
 
     def most_common(self, number=None):
         if not number and self.counts_counters:
@@ -25,8 +25,19 @@ class SectionSummaryKeywords:
         else:
             number = 0
 
-        return [self.keywords_counters[keyword].to_dict() for keyword, score in self.counts_counters.most_common(number)
-                if score > 1]
+        results = []
+        titles = []
+
+        for keyword, score in self.counts_counters.most_common(number*2):
+            counter = self.keywords_counters[keyword]
+            if score > 1 and counter.sample_title not in titles:
+                results.append(counter.to_dict())
+                titles.append(counter.sample_title)
+
+            if len(titles) == number:
+                break
+
+        return results
 
     def __str__(self):
         return "SSK: {} - {}".format(self.section, len(self.keywords_counters))
