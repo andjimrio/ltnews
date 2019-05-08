@@ -22,8 +22,8 @@ def get_keywords_by_user(profile_id):
     return Keyword.objects.filter(users__id=profile_id).all()
 
 
-def get_item_keywords(item_id, profile_id):
-    keys = Keyword.objects.filter(items__id=item_id, users__id=profile_id)
+def get_item_keywords(item_id):
+    keys = Keyword.objects.filter(items__id=item_id)
     if keys.count():
         return keys.values_list('term', flat=True)
     else:

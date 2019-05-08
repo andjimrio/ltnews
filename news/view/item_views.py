@@ -91,7 +91,7 @@ class ItemSimilarity(ListAPIView):
 class ItemKeywords(APIView):
     @staticmethod
     def get(request, item_id):
-        links = get_item_keywords(item_id, request.user.profile.id)
+        links = get_item_keywords(item_id)
         return Response(links)
 
 
